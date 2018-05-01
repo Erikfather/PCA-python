@@ -1,3 +1,3 @@
 # 基于python的人脸识别算法
-#结果如下：
-!(https://github.com/Erikfather/PCA-python/edit/master/2.png)
+# 结果如下：
+!(https://github.com/Erikfather/PCA-python/blob/master/5c73c5b03d6b71a747c40a39a53ad59.png)
