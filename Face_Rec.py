@@ -71,47 +71,106 @@ def PCA(data,r):
 #人脸识别
 def face_rec():
     #k=int(input("每个人选择几张照片进行训练："))
-    x_value=[]
-    y_value=[]
-    for k in range(1,10):
-        train_face,train_label,test_face,test_label=load_orl(k)#得到数据集
-
-        #利用PCA算法进行训练
-        data_train_new,data_mean,V_r=PCA(train_face,40)#降到40维,即选取前40个主成分
-        num_train = data_train_new.shape[0]#训练脸总数
-        num_test = test_face.shape[0]#测试脸总数
-        temp_face = test_face - np.tile(data_mean,(num_test,1))
-        data_test_new = temp_face*V_r #得到测试脸在特征向量下的数据
-        data_test_new = np.array(data_test_new) # mat change to array
-        data_train_new = np.array(data_train_new)
-    
-        #测试准确度
-        true_num = 0
-        for i in range(num_test):
-            testFace = data_test_new[i,:]
-            diffMat = data_train_new - np.tile(testFace,(num_train,1))#训练数据与测试脸之间距离
-            sqDiffMat = diffMat**2
-            sqDistances = sqDiffMat.sum(axis=1)#按行求和
-            sortedDistIndicies = sqDistances.argsort()#对向量从小到大排序，使用的是索引值,得到一个向量
-            indexMin = sortedDistIndicies[0]#距离最近的索引
-            if train_label[indexMin] == test_label[i]:
-                true_num += 1
-            else:
-                pass
-
-        accuracy = float(true_num)/num_test
-        x_value.append(k)
-        y_value.append(round(accuracy,2))
+    #x_value=[]
+    #y_value=[]
+    for r in range(10,41,10):#最多降到40维,即选取前40个主成分（因为当k=1时，只有40维)
+        print("当降维到%d时"%(r))
+        x_value=[]
+        y_value=[]
+        for k in range(1,10):
+            train_face,train_label,test_face,test_label=load_orl(k)#得到数据集
         
-        print ('当每个人选择%d张照片进行训练时，The classify accuracy is: %.2f%%'%(k,accuracy * 100))
+            #利用PCA算法进行训练
+            data_train_new,data_mean,V_r=PCA(train_face,r)
+            num_train = data_train_new.shape[0]#训练脸总数
+            num_test = test_face.shape[0]#测试脸总数
+            temp_face = test_face - np.tile(data_mean,(num_test,1))
+            data_test_new = temp_face*V_r #得到测试脸在特征向量下的数据
+            data_test_new = np.array(data_test_new) # mat change to array
+            data_train_new = np.array(data_train_new)
     
-    
-    plt.plot(x_value,y_value,marker="o",markerfacecolor="red")
-    for a, b in zip(x_value, y_value):  
-        plt.text(a,b,(a,b),ha='center', va='bottom', fontsize=10)  
+            #测试准确度
+            true_num = 0
+            for i in range(num_test):
+                testFace = data_test_new[i,:]
+                diffMat = data_train_new - np.tile(testFace,(num_train,1))#训练数据与测试脸之间距离
+                sqDiffMat = diffMat**2
+                sqDistances = sqDiffMat.sum(axis=1)#按行求和
+                sortedDistIndicies = sqDistances.argsort()#对向量从小到大排序，使用的是索引值,得到一个向量
+                indexMin = sortedDistIndicies[0]#距离最近的索引
+                if train_label[indexMin] == test_label[i]:
+                    true_num += 1
+                else:
+                    pass
+
+            accuracy = float(true_num)/num_test
+            x_value.append(k)
+            y_value.append(round(accuracy,2))
+            
+            print ('当每个人选择%d张照片进行训练时，The classify accuracy is: %.2f%%'%(k,accuracy * 100))
+        
+        #绘图
+        if r==10:
+            y1_value=y_value
+            plt.plot(x_value,y_value,marker="o",markerfacecolor="red")
+            for a, b in zip(x_value, y_value):  
+                plt.text(a,b,(a,b),ha='center', va='bottom', fontsize=10)  
  
       
-    plt.title("识别准确率",fontsize=14)
+            plt.title("降到10维时识别准确率",fontsize=14)
+            plt.xlabel("K值",fontsize=14)
+            plt.ylabel("准确率",fontsize=14)
+            plt.show()
+            #print ('y1_value',y1_value)
+        if r==20:
+            y2_value=y_value
+            plt.plot(x_value,y2_value,marker="o",markerfacecolor="red")
+            for a, b in zip(x_value, y_value):  
+                plt.text(a,b,(a,b),ha='center', va='bottom', fontsize=10)  
+ 
+      
+            plt.title("降到20维时识别准确率",fontsize=14)
+            plt.xlabel("K值",fontsize=14)
+            plt.ylabel("准确率",fontsize=14)
+            plt.show() 
+            #print ('y2_value',y2_value)
+        if r==30:
+            y3_value=y_value
+            plt.plot(x_value,y3_value,marker="o",markerfacecolor="red")
+            for a, b in zip(x_value, y_value):  
+                plt.text(a,b,(a,b),ha='center', va='bottom', fontsize=10)  
+ 
+      
+            plt.title("降到30维时识别准确率",fontsize=14)
+            plt.xlabel("K值",fontsize=14)
+            plt.ylabel("准确率",fontsize=14)
+            plt.show()
+            #print ('y3_value',y3_value)
+        if r==40:
+            y4_value=y_value 
+            plt.plot(x_value,y4_value,marker="o",markerfacecolor="red")
+            for a, b in zip(x_value, y_value):  
+                plt.text(a,b,(a,b),ha='center', va='bottom', fontsize=10)  
+ 
+      
+            plt.title("降到40维时识别准确率",fontsize=14)
+            plt.xlabel("K值",fontsize=14)
+            plt.ylabel("准确率",fontsize=14)
+            plt.show()
+            #print ('y4_value',y4_value) 
+        
+        
+        
+    #各维度下准确度比较
+    L1,=plt.plot(x_value,y1_value,marker="o",markerfacecolor="red")   
+    L2,=plt.plot(x_value,y2_value,marker="o",markerfacecolor="red")
+    L3,=plt.plot(x_value,y3_value,marker="o",markerfacecolor="red")
+    L4,=plt.plot(x_value,y4_value,marker="o",markerfacecolor="red")
+    #for a, b in zip(x_value, y1_value):  
+    #    plt.text(a,b,(a,b),ha='center', va='bottom', fontsize=10)  
+ 
+    plt.legend([L1,L2,L3,L4], ["降到10维", "降到20维","降到30维","降到40维"], loc=4)
+    plt.title("各维度识别准确率比较",fontsize=14)
     plt.xlabel("K值",fontsize=14)
     plt.ylabel("准确率",fontsize=14)
     plt.show()
